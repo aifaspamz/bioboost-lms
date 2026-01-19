@@ -7,7 +7,6 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
- 
   const user = session?.user ?? null;
   const role = user?.user_metadata?.role ?? null;
   const username = user?.user_metadata?.username ?? null;
@@ -19,7 +18,6 @@ export function AuthProvider({ children }) {
       setLoading(false);
     });
 
-    
     const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession ?? null);
       setLoading(false);

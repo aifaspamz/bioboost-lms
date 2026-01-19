@@ -1,17 +1,19 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import { AuthContext } from "../contexts/AuthContext";
 
 export default function Dashboard() {
-  const { user, role } = useContext(AuthContext);
+  const { role, loading, username } = useContext(AuthContext);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="container">
       <Navigation />
 
       <div className="card">
-        <h1>Welcome to Bioboost, {user?.username || "Student"}!</h1>
+        <h1>Welcome to Bioboost, {username || "Student"}!</h1>
         <p className="small">
           Role: <b>{role}</b>
         </p>
