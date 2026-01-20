@@ -7,6 +7,7 @@ import { ProgressProvider } from "./contexts/ProgressContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import LearningHub from "./pages/LearningHub";
+import LearningHubDetails from "./pages/LearningHubDetails";
 import Game from "./pages/Game";
 import Quizzes from "./pages/Quizzes";
 import Progress from "./pages/Progress";
@@ -52,6 +53,14 @@ export default function App() {
                   <LearningHub />
                 </ProtectedRoute>
               }
+            />
+            <Route 
+              path="/learning/:lessonId" 
+              element={
+                <ProtectedRoute>
+                  <LearningHubDetails />
+                </ProtectedRoute>
+              } 
             />
             <Route
               path="/new-lesson"
