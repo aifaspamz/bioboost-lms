@@ -4,7 +4,7 @@ import Navigation from "../components/Navigation";
 import { AuthContext } from "../contexts/AuthContext";
 
 export default function Dashboard() {
-  const { role, loading, username } = useContext(AuthContext);
+  const { loading, username, role, user } = useContext(AuthContext);
 
   if (loading) return <div>Loading...</div>;
 

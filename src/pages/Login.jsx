@@ -21,8 +21,8 @@ export default function Login() {
   const [regRole, setRegRole] = useState("student");
 
   const goAfterLogin = (role) => {
-    if (role === "teacher") navigate("/teacher");
-    else navigate("/dashboard");
+    // if (role === "teacher") navigate("/teacher");
+    navigate("/dashboard");
   };
 
   const handleLogin = async (e) => {

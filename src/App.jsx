@@ -11,6 +11,7 @@ import Game from "./pages/Game";
 import Quizzes from "./pages/Quizzes";
 import Progress from "./pages/Progress";
 import TeacherPanel from "./pages/TeacherPanel";
+import CreateLesson from "./pages/teachers/CreateLesson";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(AuthContext);
@@ -49,6 +50,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <LearningHub />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/new-lesson"
+              element={
+                <ProtectedRoute>
+                  <CreateLesson />
                 </ProtectedRoute>
               }
             />
