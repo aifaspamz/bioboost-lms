@@ -34,7 +34,7 @@ export default function Navigation() {
         <div className="nav-menu">
           <Link to="/dashboard" onClick={close}>Home Dashboard</Link>
           <Link to="/learning" onClick={close}>Learning Hub</Link>
-          <Link to="/game" onClick={close}>Game</Link>
+          <Link to="/interactive-krebs" onClick={close}>Interactive Krebs</Link>
           <Link to="/quizzes" onClick={close}>Quizzes</Link>
           <Link to="/progress" onClick={close}>Progress</Link>
 

@@ -30,6 +30,29 @@ export default function LearningHub() {
       setLoading(false);
     }
   };
+
+  const handleEdit = (e, lessonId) => {
+    e.stopPropagation();
+    navigate(`/edit-lesson/${lessonId}`);
+  };
+
+  const handleDelete = async (e, lessonId) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this lesson?')) {
+      try {
+        const { error } = await supabase
+          .from('lessons')
+          .delete()
+          .eq('id', lessonId);
+
+        if (error) throw error;
+        setLessons(lessons.filter(lesson => lesson.id !== lessonId));
+      } catch (error) {
+        console.error("Error deleting lesson:", error.message);
+        alert('Failed to delete lesson');
+      }
+    }
+  };
   
   useEffect(() => {
     fetchLessons();
@@ -64,6 +87,25 @@ export default function LearningHub() {
 
             <div className="card-info">
               <span className="small" style={{ fontWeight: '800' }}>{lesson.teacher_name}</span>
+              
+              {role === "teacher" && (
+                <div className="card-actions">
+                  <button 
+                    className="btn btn-sm" 
+                    onClick={(e) => handleEdit(e, lesson.id)}
+                    title="Edit Lesson"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="btn btn-sm btn-danger" 
+                    onClick={(e) => handleDelete(e, lesson.id)}
+                    title="Delete Lesson"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

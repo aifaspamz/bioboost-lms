@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import LearningHub from "./pages/LearningHub";
 import LearningHubDetails from "./pages/LearningHubDetails";
-import Game from "./pages/Game";
+import InteractiveKrebs from "./pages/InteractiveKrebs";
 import Quizzes from "./pages/Quizzes";
 import Progress from "./pages/Progress";
 import TeacherPanel from "./pages/TeacherPanel";
@@ -71,13 +71,14 @@ export default function App() {
               }
             />
             <Route
-              path="/game"
+              path="/interactive-krebs"
               element={
                 <ProtectedRoute>
-                  <Game />
+                  <InteractiveKrebs />
                 </ProtectedRoute>
               }
             />
+        
             <Route
               path="/quizzes"
               element={

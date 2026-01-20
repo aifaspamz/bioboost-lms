@@ -4,14 +4,14 @@ import { AuthContext } from "../contexts/AuthContext";
 import { ProgressContext } from "../contexts/ProgressContext";
 
 export default function Progress() {
-  const { user, logout } = useContext(AuthContext);
+  const { username, logout } = useContext(AuthContext);
   const { progress, getLevel } = useContext(ProgressContext);
 
   const overallLevel = getLevel();
 
   // Progress levels
   const tfLevel = progress.quizzes >= 1 ? "Master" : "Beginner";
-  const gameLevel = progress.games >= 1 ? "Master" : "Beginner";
+  const krebsLevel = progress.games >= 1 ? "Master" : "Beginner";
 
   const fillWidth = (level) => {
     if (level === "Beginner") return "0%";
@@ -74,7 +74,7 @@ export default function Progress() {
           <div>
            
             <div className="profile-username">
-              {user?.username || "Username"}
+              {username || "Username"}
             </div>
           </div>
 
@@ -86,7 +86,7 @@ export default function Progress() {
         
         <div className="profile-section">
           <div className="profile-section-title">
-            TRUE OR FALSE / QUIZZES
+            QUIZ
           </div>
           <LevelTrack level={tfLevel} />
           <div className="profile-hint">
@@ -94,16 +94,16 @@ export default function Progress() {
           </div>
         </div>
 
-        
         <div className="profile-section">
           <div className="profile-section-title">
-            NAME THAT THING (GAME)
+            INTERACTIVE KREBS
           </div>
-          <LevelTrack level={gameLevel} />
+          <LevelTrack level={krebsLevel} />
           <div className="profile-hint">
-            Status: {progress.games >= 1 ? "Completed ✅" : "Not completed"}
+            Status: {progress.games >= 1 ? "Completed ✅" : "Not completed yet"}
           </div>
         </div>
+
 
         <button className="btn logout-btn" onClick={logout}>
           Log Out

@@ -21,7 +21,7 @@ export default function Dashboard() {
 
         <div className="grid">
           <Link className="btn" to="/learning">Learning Hub</Link>
-          <Link className="btn" to="/game">Game</Link>
+          <Link className="btn" to="/interactive-krebs">Interactive Krebs</Link>
           <Link className="btn" to="/quizzes">Quizzes</Link>
           <Link className="btn" to="/progress">Progress</Link>
 
