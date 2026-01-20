@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { supabase } from '../../supabaseClient';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import Navigation from '../../components/Navigation';
 import { AuthContext } from '../../contexts/AuthContext';
 
@@ -108,6 +108,10 @@ export default function CreateLesson() {
       setLoading(false);
     }
   };
+
+  if (role === 'student') {
+    return <Navigate to="/learning" replace />;
+  }
 
   return (
     <div className="container">

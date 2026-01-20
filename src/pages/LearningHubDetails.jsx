@@ -10,8 +10,6 @@ export default function LearningHubDetails() {
   const [blocks, setBlocks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [flippedIndex, setFlippedIndex] = useState(null);
-
   useEffect(() => {
     const fetchFullLesson = async () => {
       setLoading(true);
