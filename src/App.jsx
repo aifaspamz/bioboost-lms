@@ -9,23 +9,16 @@ import Dashboard from "./pages/Dashboard";
 import LearningHub from "./pages/LearningHub";
 import LearningHubDetails from "./pages/LearningHubDetails";
 import InteractiveKrebs from "./pages/InteractiveKrebs";
-import Quizzes from "./pages/Quizzes.jsx"; // ✅ IMPORTANT: force the correct file
+import Quizzes from "./pages/Quizzes.jsx"; // ✅ explicit .jsx to avoid duplicate file issues
 import Progress from "./pages/Progress";
-import TeacherPanel from "./pages/TeacherPanel";
 import CreateLesson from "./pages/teachers/CreateLesson";
+import "./styles/quiz-modal.css";
+
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(AuthContext);
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
-  return children;
-}
-
-function TeacherRoute({ children }) {
-  const { user, role, loading } = useContext(AuthContext);
-  if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
-  if (role !== "teacher") return <Navigate to="/dashboard" replace />;
   return children;
 }
 
@@ -101,14 +94,7 @@ export default function App() {
               }
             />
 
-            <Route
-              path="/teacher"
-              element={
-                <TeacherRoute>
-                  <TeacherPanel />
-                </TeacherRoute>
-              }
-            />
+            {/* ❌ Teacher Panel route removed intentionally */}
 
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

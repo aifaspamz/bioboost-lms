@@ -34,6 +34,11 @@ export default function Navigation() {
           onClick={() => setOpen((v) => !v)}
           aria-label="Menu"
         >
+        <button
+          className="hamburger"
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Menu"
+        >
           ☰
         </button>
       </div>

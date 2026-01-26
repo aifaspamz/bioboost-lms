@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import { AuthContext } from "../contexts/AuthContext";
@@ -13,11 +13,15 @@ export default function Dashboard() {
       <Navigation />
 
       <div className="card">
-        <h1>Welcome to Bioboost, {username || "Student"}!</h1>
+        <h1>Welcome to Bioboost, {username || "Set username"}!</h1>
+
         <p className="small">
-          Role: <b>{role}</b>
+          Role: <b>{role || "student"}</b>
         </p>
-        <p className="small">Learn the Krebs Cycle through lectures, quizzes, and a mini game.</p>
+
+        <p className="small">
+          Learn the Krebs Cycle through lectures, quizzes, and a mini game.
+        </p>
 
         <div className="grid">
           <Link className="btn" to="/learning">Learning Hub</Link>

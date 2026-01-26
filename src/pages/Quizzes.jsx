@@ -1,7 +1,17 @@
 import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import Navigation from "../components/Navigation";
 import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 import { ProgressContext } from "../contexts/ProgressContext";
+import { supabase } from "../supabaseClient";
+
+const MAX_ATTEMPTS = 3;
+const COOLDOWN_SECONDS = 5 * 60; // 5 minutes
+
+function shuffleArray(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
 import { supabase } from "../supabaseClient";
 
 const MAX_ATTEMPTS = 3;
@@ -17,6 +27,13 @@ export default function Quizzes() {
   const { user, role } = useContext(AuthContext);
   const { updateProgress } = useContext(ProgressContext);
 
+  // Quiz list state
+  const [quizzes, setQuizzes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+
+  // Quiz taking state
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   // Quiz list state
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -412,6 +429,7 @@ export default function Quizzes() {
 
     let correct = 0;
     selectedQuiz.questions.forEach((q) => {
+    selectedQuiz.questions.forEach((q) => {
       if (answers[q.id] === q.answer) correct++;
     });
 
@@ -453,6 +471,7 @@ export default function Quizzes() {
     setAnswers({});
     setSubmitted(false);
     setCurrentQuestionIndex(0);
+    setCurrentQuestionIndex(0);
     setScore(0);
 
     // Re-randomize questions again for retake
@@ -471,6 +490,7 @@ export default function Quizzes() {
       <div className="container">
         <Navigation />
         <div className="card">
+          <p>Loading...</p>
           <p>Loading...</p>
         </div>
       </div>

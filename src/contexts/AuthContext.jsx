@@ -1,10 +1,15 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../supabaseClient";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const [username, setUsername] = useState(null);
+  const [role, setRole] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState(null);
   const [teacher_verified, setTeacherVerified] = useState(false);
@@ -60,7 +65,10 @@ export function AuthProvider({ children }) {
       setLoading(false);
     });
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      if (unsub) unsub();
+      removeChannel();
+    };
   }, []);
 
   const register = async ({ email, password, username, role }) => {
@@ -77,13 +85,13 @@ export function AuthProvider({ children }) {
   };
 
   const login = async ({ email, password }) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) return { ok: false, message: error.message };
-    return { ok: true, data };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return { ok: false, message: error.message };
+      return { ok: true, data };
+    } catch (e) {
+      return { ok: false, message: e?.message || "Login failed" };
+    }
   };
 
   const logout = async () => {
@@ -99,7 +107,9 @@ export function AuthProvider({ children }) {
       role,
       teacher_verified,
       username,
+      role,
       loading,
+      displayName: username || "Set username",
       register,
       login,
       logout,
