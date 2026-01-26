@@ -4,7 +4,7 @@ import Navigation from "../components/Navigation";
 import { AuthContext } from "../contexts/AuthContext";
 
 export default function Dashboard() {
-  const { loading, username, role, user } = useContext(AuthContext);
+  const { loading, username, role, teacher_verified, user } = useContext(AuthContext);
 
   if (loading) return <div>Loading...</div>;
 
@@ -24,8 +24,9 @@ export default function Dashboard() {
           <Link className="btn" to="/interactive-krebs">Interactive Krebs</Link>
           <Link className="btn" to="/quizzes">Quizzes</Link>
           <Link className="btn" to="/progress">Progress</Link>
-
-          {role === "teacher" && <Link className="btn" to="/teacher">Teacher Panel</Link>}
+          {role === "teacher" && teacher_verified && (
+            <Link className="btn" to="/new-lesson">Create Lesson</Link>
+          )}
         </div>
       </div>
     </div>

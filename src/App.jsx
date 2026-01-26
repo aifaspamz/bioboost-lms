@@ -9,7 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import LearningHub from "./pages/LearningHub";
 import LearningHubDetails from "./pages/LearningHubDetails";
 import InteractiveKrebs from "./pages/InteractiveKrebs";
-import Quizzes from "./pages/Quizzes";
+import Quizzes from "./pages/Quizzes.jsx"; // ✅ IMPORTANT: force the correct file
 import Progress from "./pages/Progress";
 import TeacherPanel from "./pages/TeacherPanel";
 import CreateLesson from "./pages/teachers/CreateLesson";
@@ -46,6 +46,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/learning"
               element={
@@ -54,14 +55,16 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-            <Route 
-              path="/learning/:lessonId" 
+
+            <Route
+              path="/learning/:lessonId"
               element={
                 <ProtectedRoute>
                   <LearningHubDetails />
                 </ProtectedRoute>
-              } 
+              }
             />
+
             <Route
               path="/new-lesson"
               element={
@@ -70,6 +73,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/interactive-krebs"
               element={
@@ -78,7 +82,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-        
+
             <Route
               path="/quizzes"
               element={
@@ -87,6 +91,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/progress"
               element={

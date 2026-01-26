@@ -1,9 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 
 export default function Login() {
-  const { register, login } = useContext(AuthContext);
+  const { register, login, role } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [mode, setMode] = useState("login"); // "login" | "register"
@@ -20,8 +20,10 @@ export default function Login() {
   const [regPassword, setRegPassword] = useState("");
   const [regRole, setRegRole] = useState("student");
 
-  const goAfterLogin = (role) => {
-    // if (role === "teacher") navigate("/teacher");
+  // After login, rely on AuthContext role
+  const goAfterLogin = (finalRole) => {
+    // if you want teachers to go to teacher panel, enable this:
+    // if (finalRole === "teacher") return navigate("/teacher");
     navigate("/dashboard");
   };
 
@@ -36,15 +38,27 @@ export default function Login() {
     }
 
     const res = await login({ email: email.trim(), password });
+
     if (!res.ok) {
       setError(res.message || "Login failed.");
       return;
     }
 
-    const user = res.data?.user;
-    const role = user?.user_metadata?.role || "student";
-    goAfterLogin(role);
+    // We DO NOT trust res.data.user_metadata as final truth here
+    // because role state in AuthContext may update right after login.
+    setInfo("Login successful. Redirecting...");
   };
+
+  // When login succeeds, AuthContext updates user/role; redirect then.
+  useEffect(() => {
+    // If you want immediate redirect after login:
+    // When login returns success, this role will update shortly.
+    if (info === "Login successful. Redirecting...") {
+      const finalRole = role || "student";
+      goAfterLogin(finalRole);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info, role]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -68,12 +82,10 @@ export default function Login() {
       return;
     }
 
-    // Supabase may require email confirmation depending on your settings.
     setInfo(
       "Account created! If email confirmations are ON in Supabase, please check your email. Otherwise, you can log in now."
     );
 
-    // Move to login mode + prefill
     setMode("login");
     setEmail(regEmail.trim());
     setPassword(regPassword);
@@ -82,9 +94,7 @@ export default function Login() {
   return (
     <div className="auth-wrap">
       <div className="auth-card">
-        {/* Logo */}
         <div className="logo-header">
-          {/* put logo.png inside /public */}
           <img src="/logo.png" alt="BioBoost Logo" className="bioboost-logo" />
         </div>
 
@@ -98,8 +108,23 @@ export default function Login() {
             : "Create your BioBoost account (Student or Teacher) to access the platform."}
         </p>
 
-        {error ? <div className="error" style={{ marginTop: 12 }}>{error}</div> : null}
-        {info ? <div className="success" style={{ marginTop: 12 }}>{info}</div> : null}
+        {mode === "login" && (
+          <p className="small" style={{ marginTop: 6, opacity: 0.85 }}>
+            Role detected: <b>{role || "no-role"}</b>
+          </p>
+        )}
+
+        {error ? (
+          <div className="error" style={{ marginTop: 12 }}>
+            {error}
+          </div>
+        ) : null}
+
+        {info ? (
+          <div className="success" style={{ marginTop: 12 }}>
+            {info}
+          </div>
+        ) : null}
 
         {mode === "login" ? (
           <form onSubmit={handleLogin} className="stack" style={{ marginTop: 14 }}>

@@ -6,20 +6,57 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState(null);
+  const [teacher_verified, setTeacherVerified] = useState(false);
 
   const user = session?.user ?? null;
-  const role = user?.user_metadata?.role ?? null;
   const username = user?.user_metadata?.username ?? null;
 
-  useEffect(() => {
-    
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session ?? null);
-      setLoading(false);
-    });
+  // Fetch user profile from public.profiles table
+  const fetchUserProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role, teacher_verified")
+        .eq("id", userId)
+        .single();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (error) {
+        console.error("Error fetching profile:", error);
+        setRole(null);
+        setTeacherVerified(false);
+        return;
+      }
+
+      setRole(data?.role ?? null);
+      setTeacherVerified(data?.teacher_verified ?? false);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setRole(null);
+      setTeacherVerified(false);
+    }
+  };
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session ?? null);
+      if (data.session?.user?.id) {
+        await fetchUserProfile(data.session.user.id);
+      }
+      setLoading(false);
+    };
+
+    initializeAuth();
+
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
       setSession(newSession ?? null);
+      if (newSession?.user?.id) {
+        await fetchUserProfile(newSession.user.id);
+      } else {
+        setRole(null);
+        setTeacherVerified(false);
+      }
       setLoading(false);
     });
 
@@ -31,7 +68,7 @@ export function AuthProvider({ children }) {
       email,
       password,
       options: {
-        data: { username, role }, 
+        data: { username }, 
       },
     });
 
@@ -51,6 +88,8 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     await supabase.auth.signOut();
+    setRole(null);
+    setTeacherVerified(false);
   };
 
   const value = useMemo(
@@ -58,13 +97,14 @@ export function AuthProvider({ children }) {
       session,
       user,
       role,
+      teacher_verified,
       username,
       loading,
       register,
       login,
       logout,
     }),
-    [session, user, role, username, loading]
+    [session, user, role, teacher_verified, username, loading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
