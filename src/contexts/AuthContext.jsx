@@ -9,17 +9,13 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState(null);
   // const [user, setUser] = useState(null);
-  // const [username, setUsername] = useState(null);
+  const [username, setUsername] = useState(null);
   const [teacher_verified, setTeacherVerified] = useState(false);
 
   // const user = session?.user ?? null;
   // const username = user?.user_metadata?.username ?? null;
 
   const user = useMemo(() => session?.user ?? null, [session]);
-
-  const username = useMemo(() => 
-    user?.user_metadata?.username ?? "student", 
-  [user]);
 
   const startedRef = useRef(false);
   const channelRef = useRef(null);
@@ -36,21 +32,24 @@ export function AuthProvider({ children }) {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("role, teacher_verified")
+        .select("username, role, teacher_verified")
         .eq("id", userId)
         .single();
 
       if (error) {
         console.error("Error fetching profile:", error);
+        setUsername(null);
         setRole(null);
         setTeacherVerified(false);
         return;
       }
 
+      setUsername(data?.username ?? null);
       setRole(data?.role ?? null);
       setTeacherVerified(data?.teacher_verified ?? false);
     } catch (error) {
       console.error("Error fetching profile:", error);
+      setUsername(null);
       setRole(null);
       setTeacherVerified(false);
     }
@@ -82,6 +81,7 @@ export function AuthProvider({ children }) {
           subscribeProfile(userId); // Keep your real-time profile sync
         } else {
           setRole(null);
+          setUsername(null);
           setTeacherVerified(false);
         }
       } catch (e) {
@@ -98,7 +98,7 @@ export function AuthProvider({ children }) {
           try {
             setSession(newSession ?? null);
             const u = newSession?.user ?? null;
-            setUser(u);
+            // setUser(u);
 
             if (u?.id) {
               await fetchUserProfile(u.id);
@@ -161,11 +161,10 @@ export function AuthProvider({ children }) {
     () => ({
       session,
       user,
-      role,
       teacher_verified,
       role,
       loading,
-      displayName: username || "Set username",
+      username,
       register,
       login,
       logout,
