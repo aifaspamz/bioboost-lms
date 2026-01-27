@@ -9,7 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import LearningHub from "./pages/LearningHub";
 import LearningHubDetails from "./pages/LearningHubDetails";
 import InteractiveKrebs from "./pages/InteractiveKrebs";
-import Quizzes from "./pages/Quizzes.jsx"; // ✅ explicit .jsx to avoid duplicate file issues
+import Quizzes from "./pages/Quizzes.jsx";
 import Progress from "./pages/Progress";
 import CreateLesson from "./pages/teachers/CreateLesson";
 import "./styles/quiz-modal.css";
@@ -93,8 +93,6 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-
-            {/* ❌ Teacher Panel route removed intentionally */}
 
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

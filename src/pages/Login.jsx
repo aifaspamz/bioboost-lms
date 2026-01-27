@@ -108,11 +108,12 @@ export default function Login() {
             : "Create your BioBoost account (Student or Teacher) to access the platform."}
         </p>
 
-        {mode === "login" && (
+        {/* DI NAMAN SIGURO ITO NECESSARY SINCE NASA LOGIN PAGE PA AT WALA PANG USER INFO */}
+        {/* {mode === "login" && (
           <p className="small" style={{ marginTop: 6, opacity: 0.85 }}>
             Role detected: <b>{role || "no-role"}</b>
           </p>
-        )}
+        )} */}
 
         {error ? (
           <div className="error" style={{ marginTop: 12 }}>
