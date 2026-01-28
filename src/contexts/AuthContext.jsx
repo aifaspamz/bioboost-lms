@@ -27,6 +27,31 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Subscribe to real-time profile updates
+  const subscribeProfile = (userId) => {
+    removeChannel(); // Remove existing channel if any
+
+    channelRef.current = supabase
+      .channel(`public:profiles:id=eq.${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${userId}`,
+        },
+        (payload) => {
+          if (payload.new) {
+            setUsername(payload.new.username ?? null);
+            setRole(payload.new.role ?? null);
+            setTeacherVerified(payload.new.teacher_verified ?? false);
+          }
+        }
+      )
+      .subscribe();
+  };
+
   // Fetch user profile from public.profiles table
   const fetchUserProfile = async (userId) => {
     try {

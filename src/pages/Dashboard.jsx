@@ -20,7 +20,7 @@ export default function Dashboard() {
         </p>
 
         <p className="small">
-          Learn the Krebs Cycle through lectures, quizzes, and a mini game.
+          Learn the Krebs Cycle through lectures, quizzes, and an interactive krebs feature.
         </p>
 
         <div className="grid">

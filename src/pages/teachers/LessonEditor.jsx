@@ -6,6 +6,45 @@ import { AuthContext } from '../../contexts/AuthContext';
 
 import '../../styles/lesson-editor.css';
 
+// Feature: Helper function to convert various video URLs to embeddable formats
+const convertToEmbedUrl = (url) => {
+  if (!url) return '';
+
+  // YouTube conversion
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    if (url.includes('youtube.com/embed/')) return url; // Already in embed format
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+    if (match) return `https://www.youtube.com/embed/${match[1]}`;
+  }
+
+  // Google Drive conversion - handles multiple formats
+  if (url.includes('drive.google.com')) {
+    // Try to extract file ID from sharing URL
+    let fileId = null;
+    
+    // Format: https://drive.google.com/file/d/FILE_ID/view
+    const match1 = url.match(/\/d\/([a-zA-Z0-9-_]+)\//);
+    if (match1) fileId = match1[1];
+    
+    // Format: https://drive.google.com/open?id=FILE_ID
+    if (!fileId) {
+      const match2 = url.match(/id=([a-zA-Z0-9-_]+)/);
+      if (match2) fileId = match2[1];
+    }
+    
+    if (fileId) return `https://drive.google.com/file/d/${fileId}/preview`;
+  }
+
+  // Vimeo conversion
+  if (url.includes('vimeo.com')) {
+    const match = url.match(/vimeo\.com\/(\d+)/);
+    if (match) return `https://player.vimeo.com/video/${match[1]}`;
+  }
+
+  // Return as-is if already an embed URL or other format
+  return url;
+};
+
 export default function LessonEditor() {
   const { id } = useParams();
   const isEditMode = Boolean(id);
@@ -86,6 +125,7 @@ export default function LessonEditor() {
       const blockData = await Promise.all(blocks.map(async (block, index) => {
         let blockImageUrl = block.block_image_url;
         let blockVideoUrl = block.block_video_url;
+        let blockExternalVideoUrl = block.block_external_video_url || ''; // Feature: Handle external video URL (YouTube/URL links)
 
         if (block.image_file) {
           const imgName = `${Date.now()}_img_${index}`;
@@ -101,6 +141,11 @@ export default function LessonEditor() {
           blockVideoUrl = supabase.storage.from('lesson-images').getPublicUrl(vidUpload.path).data.publicUrl;
         }
 
+        // Feature: If external video URL is provided, use it instead of uploaded video
+        if (block.external_video_url) {
+          blockExternalVideoUrl = convertToEmbedUrl(block.external_video_url);
+        }
+
         const bPayload = {
           lesson_id: savedLesson.id,
           order_index: index,
@@ -108,6 +153,7 @@ export default function LessonEditor() {
           block_text: block.block_text,
           block_image_url: blockImageUrl,
           block_video_url: blockVideoUrl,
+          block_external_video_url: blockExternalVideoUrl, // Feature: Add external video URL to payload
         };
 
         // If block already has a real ID (not Date.now()), update it
@@ -164,7 +210,8 @@ export default function LessonEditor() {
           block_title: b.block_title,
           block_text: b.block_text,
           block_image_url: b.block_image_url,
-          block_video_url: b.block_video_url
+          block_video_url: b.block_video_url,
+          block_external_video_url: b.block_external_video_url || '' // Feature: Load external video URL when editing existing lessons
         }));
         
       setBlocks(existingBlocks.length > 0 ? existingBlocks : blocks)
@@ -262,6 +309,19 @@ export default function LessonEditor() {
 
             setBlocks(newBlocks);
           }} />
+          {/* Feature: External video URL input for YouTube or other video platform links */}
+          <label className="small">Or paste YouTube/Video URL (Optional):</label>
+          <input 
+            type="text"
+            className="input-field"
+            placeholder="e.g., https://www.youtube.com/embed/... or any video URL"
+            value={block.external_video_url || ''}
+            onChange={(e) => {
+              const newBlocks = [...blocks];
+              newBlocks[index].external_video_url = e.target.value;
+              setBlocks(newBlocks);
+            }}
+          />
 
           <div className="file-preview-container">
             {(block.image_file || block.block_image_url) && !block.video_file && (
@@ -283,6 +343,22 @@ export default function LessonEditor() {
                 >
                   <source src={block.video_file ? URL.createObjectURL(block.video_file) : block.block_video_url} />
                 </video>
+              </div>
+            )}
+
+            {/* Feature: External video URL preview using iframe for embedded video players (YouTube, etc.) */}
+            {(block.external_video_url || block.block_external_video_url) && (
+              <div className="preview-wrapper">
+                <iframe
+                  width="100%"
+                  height="400"
+                  src={convertToEmbedUrl(block.external_video_url || block.block_external_video_url)}
+                  title="External Video Preview"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="preview-media"
+                />
               </div>
             )}
           </div>
