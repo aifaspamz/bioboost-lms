@@ -69,6 +69,13 @@ export default function LearningHubDetails() {
                 />
               )}
 
+              {block.block_video_url && (
+                <video controls className="lesson-video">
+                  <source src={block.block_video_url} />
+                  Your browser does not support the video tag.
+                </video>
+              )}
+
               <pre className="discussion-text">{block.block_text}</pre>
             </div>
           ))}

@@ -19,11 +19,11 @@ export default function CreateLesson() {
   });
 
   const [blocks, setBlocks] = useState([
-    { id: Date.now(), block_title: '', block_text: '', image_file: null }
+    { id: Date.now(), block_title: '', block_text: '', image_file: null, video_file: null }
   ]);
 
   const addBlock = () => {
-    setBlocks([...blocks, { id: Date.now(), block_title: '', block_text: '', image_file: null }]);
+    setBlocks([...blocks, { id: Date.now(), block_title: '', block_text: '', image_file: null, video_file: null }]);
   };
 
   const removeBlock = (index) => {
@@ -72,6 +72,7 @@ export default function CreateLesson() {
       // SAVES UNG MGA LESSON BLOCKS
       const blockData = await Promise.all(blocks.map(async (block, index) => {
         let blockImageUrl = null;
+        let blockVideoUrl = null;
 
         if (block.image_file) {
           const imgName = `${Date.now()}_block_${index}`;
@@ -84,12 +85,24 @@ export default function CreateLesson() {
           blockImageUrl = publicUrl;
         }
 
+        if (block.video_file) {
+          const videoName = `${Date.now()}_block_${index}`;
+          const { data: videoUpload, error: videoError } = await supabase.storage
+            .from('lesson-images')
+            .upload(videoName, block.video_file);
+
+          if (videoError) throw videoError;
+          const { data: { publicUrl } } = supabase.storage.from('lesson-images').getPublicUrl(videoUpload.path);
+          blockVideoUrl = publicUrl;
+        }
+
         return {
           lesson_id: newLesson.id,
           order_index: index,
           block_title: block.block_title,
           block_text: block.block_text,
-          block_image_url: blockImageUrl
+          block_image_url: blockImageUrl,
+          block_video_url: blockVideoUrl,
         };
       }));
 
@@ -176,10 +189,20 @@ export default function CreateLesson() {
               setBlocks(newBlocks);
             }}
           />
-          <label className="small">Section Image (Optional):</label>
+          <label className="small">Section Image or Video (Optional):</label>
           <input type="file" onChange={(e) => {
+            const file = e.target.files[0];
+
+            if (!file) return;
+
             const newBlocks = [...blocks];
-            newBlocks[index].image_file = e.target.files[0];
+
+            if(file.type.startsWith('image/'))
+              newBlocks[index].image_file = e.target.files[0];
+            else if(file.type.startsWith('video/'))
+              newBlocks[index].video_file = e.target.files[0];
+
+
             setBlocks(newBlocks);
           }} />
         </div>
