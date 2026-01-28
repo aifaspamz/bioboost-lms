@@ -372,6 +372,16 @@
   border-radius: 14px;
 }
 
+.lesson-video {
+  width: 100%;
+  max-width: 920px;
+  max-height: 520px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 12px;
+  border-radius: 14px;
+}
+
 .discussion-text {
   max-width: 820px;
   margin: 0 auto;
