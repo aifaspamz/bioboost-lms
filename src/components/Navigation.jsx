@@ -56,12 +56,6 @@ export default function Navigation() {
             Progress
           </Link>
 
-          {role === "teacher" && (
-            <Link to="/teacher" onClick={close}>
-              Teacher Panel
-            </Link>
-          )}
-
           <div className="nav-meta">
             <div className="small" style={{ marginTop: 8 }}>
               Logged in as <b>{username || user?.email || "Unknown"}</b> (

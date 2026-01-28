@@ -1,377 +1,199 @@
+/* Container & Headers */
 .interactive-krebs {
   padding: 20px 0;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .interactive-krebs h1 {
   text-align: center;
   margin-bottom: 10px;
   color: #6866ad;
-  font-size: 40px;
+  font-size: clamp(24px, 5vw, 40px);
 }
 
 .subtitle {
   text-align: center;
   color: #7f8c8d;
   margin-bottom: 30px;
-  font-size: 20px;
+  font-size: clamp(14px, 3vw, 18px);
 }
+
+/* Feedback Box */
+.feedback-box {
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+}
+
+.feedback-box.hint { background: #eef2ff; color: #4f46e5; border-color: #c7d2fe; }
+.feedback-box.success { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.feedback-box.error { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
 
 /* Progress Section */
 .progress-section {
-  margin-bottom: 30px;
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
+  margin-bottom: 25px;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .progress-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-size: 14px;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.score-display {
-  color: #27ae60;
-  font-weight: bold;
+  font-weight: 700;
+  color: #475569;
 }
 
 .progress-bar {
   width: 100%;
-  height: 24px;
-  background: #e0e0e0;
-  border-radius: 12px;
+  height: 12px;
+  background: #f1f5f9;
+  border-radius: 6px;
   overflow: hidden;
-  border: 2px solid #bdc3c7;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #27ae60, #2ecc71);
-  transition: width 0.3s ease;
+  background: #6866ad;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Game Container */
+/* Game Layout */
 .krebs-game-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: 280px 1fr;
+  gap: 25px;
   margin-bottom: 30px;
 }
 
-@media (max-width: 768px) {
-  .krebs-game-container {
-    grid-template-columns: 1fr;
-  }
-}
-
-.steps-panel,
-.drop-zone {
+.steps-panel, .drop-zone {
   background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
   padding: 20px;
 }
 
-.steps-panel h3,
-.drop-zone h3 {
-  margin: 0 0 15px 0;
-  color: #2c3e50;
-  font-size: 16px;
-  font-weight: 700;
+.steps-panel h3, .drop-zone h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1e293b;
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 /* Available Steps */
 .available-steps {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .step-item {
-  padding: 12px 15px;
-  background: #ecf0f1;
-  border: 2px solid #bdc3c7;
-  border-radius: 999px;
+  padding: 14px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
   cursor: grab;
   transition: all 0.2s ease;
-  user-select: none;
+  text-align: center;
+  font-weight: 600;
+  color: #475569;
 }
 
 .step-item:hover {
-  background: #d5dbdb;
-  border-color: #3498db;
-  transform: translateX(5px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #6866ad;
+  background: #f5f3ff;
+  transform: translateY(-2px);
 }
 
-.step-item.selected {
-  background: #3498db;
-  color: white;
-  border-color: #2980b9;
-  transform: scale(1.02);
-}
+.step-item:active { cursor: grabbing; }
 
-.step-item.selected .step-description {
-  color: #ecf0f1;
-}
-
-.step-item:active {
-  cursor: grabbing;
-  opacity: 0.7;
-}
-
-.step-name {
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 3px;
-  font-size: 13px;
-}
-
-.step-description {
-  font-size: 12px;
-  color: #7f8c8d;
-  font-style: italic;
-}
-
-/* Drop Zone */
+/* Drop Zone & Sequence */
 .drop-zone {
-  background: #f9f9f9;
-  border: 3px dashed #bdc3c7;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 18px;
+  min-height: 500px;
+  transition: all 0.2s ease;
+  border: 2px dashed #cbd5e1;
 }
 
 .drop-zone.drag-over {
-  border-color: #3498db;
-  background: #ecf7ff;
+  background: #f5f3ff;
+  border-color: #6866ad;
+  border-style: solid;
 }
 
-.drop-hint {
-  text-align: center;
-  color: #95a5a6;
-  margin: auto;
-  font-style: italic;
-}
-
-/* Sequence */
 .sequence {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex: 1;
+  gap: 12px;
 }
 
 .sequence-item {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 15px;
+  padding: 15px;
   background: white;
-  border: 2px solid #3498db;
-  border-radius: 999px;
-  animation: slideIn 0.3s ease;
+  border: 2px solid #6866ad;
+  border-radius: 12px;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .sequence-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: #3498db;
-  color: white;
-  border-radius: 50%;
-  font-weight: bold;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.sequence-content {
-  flex: 1;
-}
-
-.sequence-name {
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 13px;
-}
-
-.sequence-description {
-  font-size: 11px;
-  color: #7f8c8d;
-  margin-top: 2px;
-}
-
-.remove-btn {
-  flex-shrink: 0;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 50%;
   width: 28px;
   height: 28px;
-  cursor: pointer;
-  font-size: 16px;
+  background: #6866ad;
+  color: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  font-weight: 800;
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
-.remove-btn:hover {
-  background: #c0392b;
-  transform: scale(1.1);
-}
+.sequence-name { font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+.sequence-description { font-size: 13px; color: #64748b; line-height: 1.4; }
 
-/* Messages */
-.completion-message {
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: 600;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+/* Responsive */
+@media (max-width: 850px) {
+  .krebs-game-container { grid-template-columns: 1fr; }
+  .steps-panel { order: 2; }
+  .drop-zone { order: 1; min-height: 300px; }
+  .available-steps {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  to {
-    opacity: 1;
-  }
-}
-
-.completion-message.success {
-  background: #d4edda;
-  color: #155724;
-  border: 2px solid #28a745;
-}
-
-.completion-message.partial {
-  background: #fff3cd;
-  color: #856404;
-  border: 2px solid #ffc107;
-}
-
-/* Game Actions */
-.game-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-primary {
-  background: #3498db;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #2980b9;
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  .step-item { flex: 1 1 140px; }
 }
 
 .btn-secondary {
-  background: #95a5a6;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: #7f8c8d;
-}
-
-.btn {
-  padding: 10px 20px;
+  padding: 12px 24px;
+  background: #f1f5f9;
+  color: #475569;
   border: none;
   border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
+  transition: all 0.2s;
 }
 
-.btn:active {
-  transform: scale(0.95);
-}
-
-/* Mobile-friendly button for adding steps */
-.btn-add-mobile {
-  width: 100%;
-  background: #27ae60;
-  color: white;
-  margin-top: 10px;
-}
-
-.btn-add-mobile:hover {
-  background: #229954;
-}
-
-/* Touch-friendly adjustments for mobile */
-@media (max-width: 768px) {
-  .step-item {
-    padding: 15px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-
-  .step-item:active {
-    opacity: 1;
-  }
-
-  .interactive-krebs h1 {
-    font-size: 24px;
-  }
-
-  .steps-panel,
-  .drop-zone {
-    min-height: 300px;
-  }
-
-  .sequence-item {
-    padding: 15px;
-    flex-wrap: wrap;
-  }
-
-  .remove-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-
-  .game-actions {
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-  }
-}
+.btn-secondary:hover { background: #e2e8f0; }
