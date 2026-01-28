@@ -11,7 +11,7 @@ import LearningHubDetails from "./pages/LearningHubDetails";
 import InteractiveKrebs from "./pages/InteractiveKrebs";
 import Quizzes from "./pages/Quizzes.jsx";
 import Progress from "./pages/Progress";
-import CreateLesson from "./pages/teachers/CreateLesson";
+import LessonEditor from "./pages/teachers/LessonEditor.jsx";
 import "./styles/quiz-modal.css";
 
 
@@ -50,7 +50,7 @@ export default function App() {
             />
 
             <Route
-              path="/learning/:lessonId"
+              path="/learning/:id"
               element={
                 <ProtectedRoute>
                   <LearningHubDetails />
@@ -62,7 +62,16 @@ export default function App() {
               path="/new-lesson"
               element={
                 <ProtectedRoute>
-                  <CreateLesson />
+                  <LessonEditor />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/edit-lesson/:id"
+              element={
+                <ProtectedRoute>
+                  <LessonEditor />
                 </ProtectedRoute>
               }
             />

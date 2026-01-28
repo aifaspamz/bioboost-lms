@@ -5,7 +5,7 @@ import Navigation from "../components/Navigation";
 import { supabase } from "../supabaseClient";
 
 export default function LearningHubDetails() {
-  const { lessonId } = useParams(); // Grabs the ID from the URL
+  const { id } = useParams(); // Grabs the ID from the URL
   const [lesson, setLesson] = useState(null);
   const [blocks, setBlocks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,13 +18,13 @@ export default function LearningHubDetails() {
       const { data: lessonData } = await supabase
         .from('lessons')
         .select('*')
-        .eq('id', lessonId)
+        .eq('id', id)
         .single();
 
       const { data: blocksData } = await supabase
         .from('lesson_blocks')
         .select('*')
-        .eq('lesson_id', lessonId)
+        .eq('lesson_id', id)
         .order('order_index', { ascending: true });
 
       setLesson(lessonData);
@@ -33,7 +33,7 @@ export default function LearningHubDetails() {
     }
 
     fetchFullLesson();
-  }, [lessonId]);
+  }, [id]);
 
   if (loading) return <div>Loading Lesson...</div>;
   if (!lesson) return <div>Lesson not found.</div>;

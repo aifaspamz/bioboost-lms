@@ -39,3 +39,46 @@
     font-size: 18px !important;
     margin-bottom: 10px;
 }
+
+
+/* =========================
+   MEDIA PREVIEW STYLES
+   ========================= */
+
+.file-preview-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  width: 100%;
+}
+
+.preview-wrapper {
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 8px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+  max-width: 90%;
+}
+
+.preview-wrapper:hover {
+  transform: scale(1.02);
+  border-color: #a855f7;
+}
+
+.preview-media {
+  display: block;
+  max-width: 100%;
+  width: 320px; 
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+video.preview-media {
+  max-height: 200px;
+  background: #000;
+}
