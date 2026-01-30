@@ -73,9 +73,17 @@ export default function LessonEditor() {
     const blockToRemove = blocks[index];
 
     if (blocks.length > 1) {
-      // Also remove from the database
-      if (isEditMode && typeof blockToRemove.id === 'number' && blockToRemove.id > 1000000000000 === false) {
-        await supabase.from('lesson_blocks').delete().eq('id', blockToRemove.id);
+      // FIX: Improved logic to identify if the block exists in the DB
+      // Date.now() generates a 13-digit number. DB IDs are typically much smaller or UUID strings.
+      const isRealDbId = blockToRemove.id && (typeof blockToRemove.id === 'string' || blockToRemove.id < 1000000000000);
+
+      if (isEditMode && isRealDbId) {
+        const { error } = await supabase.from('lesson_blocks').delete().eq('id', blockToRemove.id);
+        if (error) {
+          console.error("Delete error:", error.message);
+          alert("Failed to delete block from server: " + error.message);
+          return;
+        }
       }
 
       const newBlocks = blocks.filter((_, i) => i !== index);
@@ -125,7 +133,7 @@ export default function LessonEditor() {
       const blockData = await Promise.all(blocks.map(async (block, index) => {
         let blockImageUrl = block.block_image_url;
         let blockVideoUrl = block.block_video_url;
-        let blockExternalVideoUrl = block.block_external_video_url || ''; // Feature: Handle external video URL (YouTube/URL links)
+        let blockExternalVideoUrl = block.block_external_video_url || '';
 
         if (block.image_file) {
           const imgName = `${Date.now()}_img_${index}`;
@@ -141,7 +149,6 @@ export default function LessonEditor() {
           blockVideoUrl = supabase.storage.from('lesson-images').getPublicUrl(vidUpload.path).data.publicUrl;
         }
 
-        // Feature: If external video URL is provided, use it instead of uploaded video
         if (block.external_video_url) {
           blockExternalVideoUrl = convertToEmbedUrl(block.external_video_url);
         }
@@ -153,11 +160,12 @@ export default function LessonEditor() {
           block_text: block.block_text,
           block_image_url: blockImageUrl,
           block_video_url: blockVideoUrl,
-          block_external_video_url: blockExternalVideoUrl, // Feature: Add external video URL to payload
+          block_external_video_url: blockExternalVideoUrl,
         };
 
-        // If block already has a real ID (not Date.now()), update it
-        if (typeof block.id === 'number' && block.id < 1000000000000) {
+        // FIX: Ensure we include the ID for updates if it is a real database ID
+        const isRealDbId = block.id && (typeof block.id === 'string' || block.id < 1000000000000);
+        if (isRealDbId) {
            bPayload.id = block.id;
         }
 
@@ -211,7 +219,7 @@ export default function LessonEditor() {
           block_text: b.block_text,
           block_image_url: b.block_image_url,
           block_video_url: b.block_video_url,
-          block_external_video_url: b.block_external_video_url || '' // Feature: Load external video URL when editing existing lessons
+          block_external_video_url: b.block_external_video_url || ''
         }));
         
       setBlocks(existingBlocks.length > 0 ? existingBlocks : blocks)
@@ -236,7 +244,6 @@ export default function LessonEditor() {
         </button>
       </div>
 
-      {/* Main Lesson Info */}
       <div className="card">
         <input 
           className="input-field" 
@@ -256,9 +263,7 @@ export default function LessonEditor() {
 
       <h2 className="small" style={{ margin: '20px 0' }}>LESSON CONTENT BLOCKS</h2>
 
-      {/* Dynamic Blocks */}
       {blocks.map((block, index) => (
-        // style={{ borderLeft: '4px solid var(--accent)' }}
         <div key={block.id} className="card">
           <div className="row">
             <span className="level-label">BLOCK #{index + 1}</span>
@@ -296,26 +301,20 @@ export default function LessonEditor() {
           <label className="small">Section Image or Video (Optional):</label>
           <input type="file" onChange={(e) => {
             const file = e.target.files[0];
-
             if (!file) return;
-
             const newBlocks = [...blocks];
-
             if(file.type.startsWith('image/'))
               newBlocks[index].image_file = e.target.files[0];
             else if(file.type.startsWith('video/'))
               newBlocks[index].video_file = e.target.files[0];
-
-
             setBlocks(newBlocks);
           }} />
-          {/* Feature: External video URL input for YouTube or other video platform links */}
           <label className="small">Or paste YouTube/Video URL (Optional):</label>
           <input 
             type="text"
             className="input-field"
             placeholder="e.g., https://www.youtube.com/embed/... or any video URL"
-            value={block.external_video_url || ''}
+            value={block.external_video_url || block.block_external_video_url || ''}
             onChange={(e) => {
               const newBlocks = [...blocks];
               newBlocks[index].external_video_url = e.target.value;
@@ -346,7 +345,6 @@ export default function LessonEditor() {
               </div>
             )}
 
-            {/* Feature: External video URL preview using iframe for embedded video players (YouTube, etc.) */}
             {(block.external_video_url || block.block_external_video_url) && (
               <div className="preview-wrapper">
                 <iframe
